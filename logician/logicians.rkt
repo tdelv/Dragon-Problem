@@ -2,18 +2,12 @@
 
 sig Logician {}
 
-one sig LogicianA extends Logician{}
-one sig LogicianB extends Logician{}
-one sig LogicianC extends Logician{}
-
 sig World {
     preferences: set Logician->Boolean
 }
-
-one sig TrueWorld extends World {}
+one sig TrueWorld extends World {} --defined to be TTT in setup predicate
 
 sig Boolean {}
-
 one sig True extends Boolean {}
 one sig False extends Boolean {}
 
@@ -23,28 +17,27 @@ one sig Ya extends Answer{}
 one sig Na extends Answer{}
 
 sig State {
-    worlds: set Logician->World->World
-    answered: set Logician -- who has answered the Bartender already
+    worlds: set Logician->World->World,
+    answered: set Logician -- who has answered the bartender already
 }
-
-one sig InitState extends State {} -- delete later
 
 pred setup {
     -- all worlds represent each Logician once
     all w : World | {
-        (w.preferences).Boolean = Logician -- what is this line lol
+        (w.preferences).Boolean = Logician -- what is this line lol we copied it from yours
         all l : Logician |
             one (w.preferences)[l]
     }
 
-    -- attempt 2: no worlds have the same preferences
+    -- all unique worlds are in the set (specific number constrained in run statement)
     all w1: World, w2: World - w1 | not (w1.preferences = w2.preferences)
-    
-    all l:Logician | l->True in TrueWorld.preferences
 
+    -- hardcoding the Trueworld
+    all l: Logician | l->True in TrueWorld.preferences
+
+    -- well formed stuff
     Boolean = True + False
     Answer = Idk + Ya + Na
-    Logician = LogicianA + LogicianB + LogicianC -- not extensible but putting this here for now
 }
 
 
@@ -57,12 +50,12 @@ sig Event {
 
 
 -- constrains all worlds that connect to each other
+-- [TODO] how to update during event propagation?
 pred consistent[l: Logician, w1: World, w2: World] {
     w1.preferences[l] = w2.preferences[l]
 }
 
-pred t
-run { setup } for exactly 3 Logician, 1 State, exactly 8 World
+--run { setup } for exactly 3 Logician, 1 State, exactly 8 World
 
 state[State] initState {
    all l: Logician, w1: World, w2: World | consistent[l, w1, w2] iff l->w1->w2 in worlds
@@ -70,9 +63,9 @@ state[State] initState {
 }
 
 transition[State] logicianSays[e: Event] {
-    -- propagate that answer and update worlds
     answered' = answered + e.speaker
     
+    -- [HI THOMAS PLS HELP TODO] propagate that answer and update worlds
 
     e.pre = this
     e.post = this'
@@ -81,22 +74,19 @@ transition[State] logicianSays[e: Event] {
 pred validAnswer[e: Event] {
     -- find a Logician that hasn't answered yet
     e.speaker not in e.pre.answered
+    
     -- make that Logician think and answer
-    all w: e.pre.worlds[e.speaker].world | 
-    -- e.answer
+    (all w: e.pre.worlds[e.speaker][TrueWorld] | w.preferences[Logician] = True) => e.answer = Ya
+    else {
+        (all w: e.pre.worlds[e.speaker][TrueWorld] | False in w.preferences[Logician] ) => e.answer = Na
+        else e.answer = Idk
+    }
 }
 
 transition[State] step {
-    some e: Event | validAnswer[e] and logicianSays[this, this', e] -- this has to be one Logician answering something
+    some e: Event | validAnswer[e] and logicianSays[this, this', e]
 }
-
-
-
---pred noEating[animals: set Animal] {
-    -- if there exists a goat, there must be more goats than wolves
-    --some Goat & animals implies (#(Goat & animals) >= #(Wolf & animals))
---}
 
 trace<|State, initState, step, _|> traces: linear {}
 
-run<|traces|> for exactly 12 State, 11 Event, 6 Animal, exactly 3 Goat, exactly 3 Wolf, 2 Position, 4 Int
+run<|traces|> setup for exactly 4 State, 3 Event, exactly 3 Logician, exactly 8 World
