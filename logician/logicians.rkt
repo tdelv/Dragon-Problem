@@ -10,7 +10,7 @@ sig World {
     preferences: set Logician->Boolean
 }
 
---one sig TrueWorld extends World {}
+one sig TrueWorld extends World {}
 
 sig Boolean {}
 
@@ -40,6 +40,8 @@ pred setup {
     -- attempt 2: no worlds have the same preferences
     all w1: World, w2: World - w1 | not (w1.preferences = w2.preferences)
     
+    all l:Logician | l->True in TrueWorld.preferences
+
     Boolean = True + False
     Answer = Idk + Ya + Na
     Logician = LogicianA + LogicianB + LogicianC -- not extensible but putting this here for now
@@ -47,7 +49,8 @@ pred setup {
 
 
 sig Event {
-    answer: one Logician->Answer,
+    speaker: one Logician,
+    answer: one Answer,
     pre: one State,
     post: one State
 }
@@ -58,6 +61,7 @@ pred consistent[l: Logician, w1: World, w2: World] {
     w1.preferences[l] = w2.preferences[l]
 }
 
+pred t
 run { setup } for exactly 3 Logician, 1 State, exactly 8 World
 
 state[State] initState {
@@ -66,14 +70,20 @@ state[State] initState {
 }
 
 transition[State] logicianSays[e: Event] {
+    -- propagate that answer and update worlds
+    answered' = answered + e.speaker
+    
+
     e.pre = this
     e.post = this'
-    -- propagate that answer and update worlds
 }
 
 pred validAnswer[e: Event] {
     -- find a Logician that hasn't answered yet
+    e.speaker not in e.pre.answered
     -- make that Logician think and answer
+    all w: e.pre.worlds[e.speaker].world | 
+    -- e.answer
 }
 
 transition[State] step {
