@@ -7,11 +7,11 @@ sig World {
 }
 one sig TrueWorld extends World {} --defined to be TTT in setup predicate
 
-sig Boolean {}
+sig Boolean {} -- symbolizes if a logician wants a drink or not
 one sig True extends Boolean {}
 one sig False extends Boolean {}
 
-sig Answer {}
+sig Answer {} -- what a logician says
 one sig Idk extends Answer{}
 one sig Ya extends Answer{}
 one sig Na extends Answer{}
@@ -32,7 +32,7 @@ pred setup {
     -- all unique worlds are in the set (specific number constrained in run statement)
     all w1: World, w2: World - w1 | not (w1.preferences = w2.preferences)
 
-    -- hardcoding the Trueworld
+    -- defining the Trueworld to be where all logicians want drink
     all l: Logician | l->True in TrueWorld.preferences
 
     -- well formed stuff
@@ -50,7 +50,6 @@ sig Event {
 
 
 -- constrains all worlds that connect to each other
--- [TODO] how to update during event propagation?
 pred consistent[l: Logician, w1: World, w2: World] {
     w1.preferences[l] = w2.preferences[l]
 }
@@ -66,16 +65,22 @@ transition[State] logicianSays[e: Event] {
     answered' = answered + e.speaker
     
     -- [HI THOMAS PLS HELP TODO] propagate that answer and update worlds
+    -- if logicianX says no -- we want all worlds where logicianX wants drink to have no edges to worlds where logicianX doesn't want drink,
+                            -- these worlds shouldn't connect to TrueWorld anymore
+    -- if logicianX says yes -- true world should have no edges coming out of it
+    -- if logicianX says idk -- all worlds where logicianX wants drink should maintain their connections to TrueWorld, everything else
+                             -- can be thrown away
 
     e.pre = this
     e.post = this'
 }
 
+-- constrains a logician to answer logically
 pred validAnswer[e: Event] {
     -- find a Logician that hasn't answered yet
     e.speaker not in e.pre.answered
     
-    -- make that Logician think and answer
+    -- make that Logician think and answer logically
     (all w: e.pre.worlds[e.speaker][TrueWorld] | w.preferences[Logician] = True) => e.answer = Ya
     else {
         (all w: e.pre.worlds[e.speaker][TrueWorld] | False in w.preferences[Logician] ) => e.answer = Na
@@ -83,6 +88,7 @@ pred validAnswer[e: Event] {
     }
 }
 
+-- wrapper for an event to happen
 transition[State] step {
     some e: Event | validAnswer[e] and logicianSays[this, this', e]
 }
