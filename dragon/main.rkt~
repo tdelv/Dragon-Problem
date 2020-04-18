@@ -4,7 +4,7 @@ sig Dragon {}
 
 abstract sig Color {}
 one sig Blue extends Color {}
-one sig Green extends Color {}
+one sig Black extends Color {}
 
 sig World {
     eyeColors : set Dragon -> Color
@@ -43,7 +43,7 @@ pred PossibleWorldSetup {
 }
 
 pred Setup {
-    Color = Blue + Green
+    Color = Blue + Black
     WorldSetup
 }
 
