@@ -24,7 +24,7 @@ sig State {
 pred setup {
     -- all worlds represent each Logician once
     all w : World | {
-        (w.preferences).Boolean = Logician -- what is this line lol we copied it from yours
+        (w.preferences).Boolean = Logician
         all l : Logician |
             one (w.preferences)[l]
     }
@@ -38,6 +38,7 @@ pred setup {
     -- well formed stuff
     Boolean = True + False
     Answer = Idk + Ya + Na
+    one TrueWorld
 }
 
 
@@ -50,7 +51,6 @@ sig Event {
 
 
 -- constrains all worlds that connect to each other
--- [TODO] how to update during event propagation?
 pred consistent[l: Logician, w1: World, w2: World] {
     w1.preferences[l] = w2.preferences[l]
 }
@@ -65,7 +65,12 @@ state[State] initState {
 transition[State] logicianSays[e: Event] {
     answered' = answered + e.speaker
     
-    -- [HI THOMAS PLS HELP TODO] propagate that answer and update worlds
+    -- propagate that answer and update worlds
+    all l: Logician | {
+        -- this feels like cheating lol
+        -- are we supposed to break it down into cases where if they answer yes then we do this and if they ansewr no then we do that etc
+        all w1: World, w2: World | (l->w1->w2 in worlds and consistent[e.speaker, w1, w2]) iff l->w1->w2 in worlds'
+    }
 
     e.pre = this
     e.post = this'
