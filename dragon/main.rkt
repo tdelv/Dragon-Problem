@@ -15,40 +15,6 @@ sig State {
     possibleWorlds : set Dragon->World->World
 }
 
-
-sig Event {
-    toMove: set Animal,
-    pre: one State,
-    post: one State
-}
-
-state[State] initState[l: Logician] {
-    -- give us all possible worlds?
-    
-}
-
-state[State] finalState {
-    -- constraints for the last state that should hold for a valid solution
-    -- Fill me in!
-    no near
-    far = Animal
-    boat = Far
-
-}
-transition[State] logicianSays[e: Event] {
-    -- constrains when logician says something, this is how the world should be
-
-    e.pre = this
-    e.post = this'
-}
-
-transition[State] step {
-    some e: Event | logicianSays[this, this', e]
-}
-
-trace<|State, initState, puzzle, finalState|> traces: linear {}
-
-run<|traces|> neverEating for exactly 12 State, 11 Event, 6 Animal, exactly 3 Goat, exactly 3 Wolf, 2 Position, 4 Int
 pred WorldSetup {
     all w : World | {
         (w.eyeColors).Color = Dragon
