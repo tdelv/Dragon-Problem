@@ -67,11 +67,13 @@ state[State] initState {
 
 transition[State] logicianSays[e: Event] {
     answered' = answered + e.speaker
+    answered' != answered
     
     -- build evidence graph for this speaker
     -- intersect everyone else's knowledge graph with that evidence graph
     all l: Logician | {
-        all w1: World, w2: World | (l->w1->w2 in knowledge and consistent[e.speaker, w1, w2]) iff l->w1->w2 in knowledge'
+        all w1: World, w2: World | l->w1->w2 in knowledge' iff ((evidence[e.speaker]).w1 = (evidence[e.speaker]).w2 and l->w1->w2 in knowledge)
+        all w: World, a: Answer | l->a->w in evidence' iff consistentEvidence[w, knowledge'[l], a]
     }
 
     e.pre = this
