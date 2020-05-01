@@ -7,16 +7,17 @@ sig World {
 }
 
 sig Color {} -- eye color
-one sig Blue extends Boolean {}
-one sig Green extends Boolean {}
+one sig Blue extends Color {}
+one sig Green extends Color {}
 
 sig Action {} -- what a dragon does. they leave if they find out they have green eyes
-one sig Leave extends Answer{}
-one sig Stay extends Answer{}
+one sig Leave extends Action{}
+one sig Stay extends Action{}
 
 sig State {
+    updated: set Dragon,
     knowledge: set Dragon->World->World,
-    evidence: set Dragon->Action->World,
+    evidence: set Dragon->Action->World
 }
 
 pred setup {
@@ -35,35 +36,42 @@ pred setup {
     Action = Leave + Stay
 }
 
-
 sig Event {
-    -- do we need anything else here?
+    currDragon: one Dragon,
     pre: one State,
     post: one State
 }
 
 
-pred consistentEvidence[w: World, knowledge: World->World, a: Answer] {
-    -- TODO: rewrite this. stay if they don't know they have green eyes, leave if all worlds say they have green eyes
-    (all connected: knowledge[w] | connected.preferences[Logician] = True) => a = Ya
-    else {
-        (all connected: knowledge[w] | False in connected.preferences[Logician]) => a = Na
-        else a = Idk
-    }
+pred consistentEvidence[d: Dragon, w: World, knowledge: World->World, a: Answer] {
+    (all connected: knowledge[w] | connected.eyeColors[d] = Green) => a = Leave
+    else a = Stay
+}
+
+-- true if all dragons OTHER than the one passed in have the same eye color
+pred consistent[d: Dragon, w1: World, w2: World] {
+    all other: Dragon - d | w1.eyeColors[other] = w2.eyeColors[other]
+}
+
+-- true if there is at least one dragon with green eyes
+pred validWorld[w: World] {
+    Green in w.eyeColors[Dragon]
 }
 
 state[State] initState {
-    -- TODO: two worlds have an edge if all the other dragons have the same eye color, and both worlds have at least one with green eyes
-   all l: Logician, w1: World, w2: World | consistent[l, w1, w2] iff l->w1->w2 in knowledge
-   all l: Logician, w: World, a: Answer | consistentEvidence[w, knowledge[l], a] iff l->a->w in evidence
+   all d: Dragon, w1: World, w2: World | d->w1->w2 in knowledge iff (consistent[d, w1, w2] and validWorld[w1] and validWorld[w2])
+   all d: Dragon, w: World, a: Action | (consistentEvidence[d, w, knowledge[d], a] and validWorld[w]) iff d->a->w in evidence
+   no updated
 }
 
 transition[State] nextDay[e: Event] {
-    -- build evidence graph for this speaker
-    -- intersect everyone else's knowledge graph with that evidence graph
-    all l: Logician | {
-        all w1: World, w2: World | l->w1->w2 in knowledge' iff ((evidence[e.speaker]).w1 = (evidence[e.speaker]).w2 and l->w1->w2 in knowledge)
-        all w: World, a: Answer | l->a->w in evidence' iff consistentEvidence[w, knowledge'[l], a]
+    (updated = Dragon) => updated' = e.currDragon
+    else updated' = updated + e.currDragon
+    updated' != updated
+
+    all d: Dragon | {
+        all w1: World, w2: World | d->w1->w2 in knowledge' iff ((evidence[e.currDragon]).w1 = (evidence[e.currDragon]).w2 and d->w1->w2 in knowledge)
+        all w: World, a: Action | d->a->w in evidence' iff consistentEvidence[d, w, knowledge'[d], a]
     }
 
     e.pre = this
@@ -77,4 +85,4 @@ transition[State] step {
 
 trace<|State, initState, step, _|> traces: linear {}
 
-run<|traces|> setup for exactly 4 State, 3 Event, exactly 3 Dragon, exactly 8 World
+run<|traces|> setup for exactly 10 State, 9 Event, exactly 3 Dragon, exactly 8 World
