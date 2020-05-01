@@ -15,7 +15,7 @@ one sig Leave extends Action{}
 one sig Stay extends Action{}
 
 sig State {
-    updated: set Dragon,
+    communal: set World->World, --shared evidence from all dragons
     knowledge: set Dragon->World->World,
     evidence: set Dragon->Action->World
 }
@@ -37,11 +37,9 @@ pred setup {
 }
 
 sig Event {
-    currDragon: one Dragon,
     pre: one State,
     post: one State
 }
-
 
 pred consistentEvidence[d: Dragon, w: World, knowledge: World->World, a: Answer] {
     (all connected: knowledge[w] | connected.eyeColors[d] = Green) => a = Leave
@@ -58,20 +56,22 @@ pred validWorld[w: World] {
     Green in w.eyeColors[Dragon]
 }
 
+-- true if this edge is shared by all the evidence graphs
+pred communalEdge[w1: World, w2: World, evidence: Dragon->Action->World] {
+    all d: Dragon | (evidence[d].w1 = evidence[d].w2) and w1 in evidence[d][Action]
+}
+
 state[State] initState {
    all d: Dragon, w1: World, w2: World | d->w1->w2 in knowledge iff (consistent[d, w1, w2] and validWorld[w1] and validWorld[w2])
    all d: Dragon, w: World, a: Action | (consistentEvidence[d, w, knowledge[d], a] and validWorld[w]) iff d->a->w in evidence
-   no updated
+   all w1: World, w2: World | (w1->w2 in communal) iff communalEdge[w1, w2, evidence]
 }
 
 transition[State] nextDay[e: Event] {
-    (updated = Dragon) => updated' = e.currDragon
-    else updated' = updated + e.currDragon
-    updated' != updated
-
     all d: Dragon | {
-        all w1: World, w2: World | d->w1->w2 in knowledge' iff ((evidence[e.currDragon]).w1 = (evidence[e.currDragon]).w2 and d->w1->w2 in knowledge)
+        all w1: World, w2: World | d->w1->w2 in knowledge' iff (w1->w2 in communal and d->w1->w2 in knowledge)
         all w: World, a: Action | d->a->w in evidence' iff consistentEvidence[d, w, knowledge'[d], a]
+        all w1: World, w2: World | (w1->w2 in communal') iff communalEdge[w1, w2, evidence']
     }
 
     e.pre = this
@@ -85,4 +85,4 @@ transition[State] step {
 
 trace<|State, initState, step, _|> traces: linear {}
 
-run<|traces|> setup for exactly 10 State, 9 Event, exactly 3 Dragon, exactly 8 World
+run<|traces|> setup for exactly 4 State, 3 Event, exactly 3 Dragon, exactly 8 World
