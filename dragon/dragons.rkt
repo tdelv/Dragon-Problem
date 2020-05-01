@@ -85,4 +85,4 @@ transition[State] step {
 
 trace<|State, initState, step, _|> traces: linear {}
 
-run<|traces|> setup for exactly 4 State, 3 Event, exactly 3 Dragon, exactly 8 World
+run<|traces|> setup for exactly 6 State, 5 Event, exactly 6 Dragon, exactly 64 World, 3 Int
