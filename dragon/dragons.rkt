@@ -23,7 +23,6 @@ sig State {
 pred setup {
     -- all worlds represent each Dragon once
     all w : World | {
-        (w.eyeColors).Color = Dragon
         all d : Dragon |
             one (w.eyeColors)[d]
     }
@@ -36,9 +35,9 @@ pred setup {
     Action = Leave + Stay
 }
 
-sig Event {
-    pre: one State,
-    post: one State
+-- the witch tells the dragons that at least one of them has green eyes
+pred witch {
+    all w: World | Green in w.eyeColors[Dragon]
 }
 
 pred consistentEvidence[d: Dragon, w: World, knowledge: World->World, a: Answer] {
@@ -46,33 +45,34 @@ pred consistentEvidence[d: Dragon, w: World, knowledge: World->World, a: Answer]
     else a = Stay
 }
 
+-- true if this edge is shared by all the evidence graphs
+pred communalEdge[w1: World, w2: World, evidence: Dragon->Action->World] {
+    all d: Dragon | evidence[d].w1 = evidence[d].w2
+}
+
+pred wellFormedEvidence {
+    all s: State | {
+        all d: Dragon, w: World, a: Action | (d->a->w in s.evidence) iff consistentEvidence[d, w, s.knowledge[d], a]
+        all w1: World, w2: World | (w1->w2 in s.communal) iff communalEdge[w1, w2, s.evidence]
+    }
+}
+
+sig Event {
+    pre: one State,
+    post: one State
+}
+
 -- true if all dragons OTHER than the one passed in have the same eye color
 pred consistent[d: Dragon, w1: World, w2: World] {
     all other: Dragon - d | w1.eyeColors[other] = w2.eyeColors[other]
 }
 
--- true if there is at least one dragon with green eyes
-pred validWorld[w: World] {
-    Green in w.eyeColors[Dragon]
-}
-
--- true if this edge is shared by all the evidence graphs
-pred communalEdge[w1: World, w2: World, evidence: Dragon->Action->World] {
-    all d: Dragon | (evidence[d].w1 = evidence[d].w2) and w1 in evidence[d][Action]
-}
-
 state[State] initState {
-   all d: Dragon, w1: World, w2: World | d->w1->w2 in knowledge iff (consistent[d, w1, w2] and validWorld[w1] and validWorld[w2])
-   all d: Dragon, w: World, a: Action | (consistentEvidence[d, w, knowledge[d], a] and validWorld[w]) iff d->a->w in evidence
-   all w1: World, w2: World | (w1->w2 in communal) iff communalEdge[w1, w2, evidence]
+    all d: Dragon, w1: World, w2: World | (d->w1->w2 in knowledge) iff consistent[d, w1, w2]
 }
 
 transition[State] nextDay[e: Event] {
-    all d: Dragon | {
-        all w1: World, w2: World | d->w1->w2 in knowledge' iff (w1->w2 in communal and d->w1->w2 in knowledge)
-        all w: World, a: Action | d->a->w in evidence' iff consistentEvidence[d, w, knowledge'[d], a]
-        all w1: World, w2: World | (w1->w2 in communal') iff communalEdge[w1, w2, evidence']
-    }
+    all d: Dragon | knowledge'[d] = knowledge[d] & communal
 
     e.pre = this
     e.post = this'
@@ -85,4 +85,11 @@ transition[State] step {
 
 trace<|State, initState, step, _|> traces: linear {}
 
-run<|traces|> setup for exactly 6 State, 5 Event, exactly 6 Dragon, exactly 64 World, 3 Int
+pred dragonProblem {
+    setup
+    wellFormedEvidence
+    witch
+}
+
+-- n Dragon, 2^n - 1 World, n State, n - 1 Event
+run<|traces|> dragonProblem for exactly 3 Dragon, exactly 7 World, exactly 3 State, 2 Event
