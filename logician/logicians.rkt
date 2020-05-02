@@ -44,11 +44,6 @@ sig Event {
     post: one State
 }
 
--- constrains all worlds that connect to each other
-pred consistent[l: Logician, w1: World, w2: World] {
-    w1.preferences[l] = w2.preferences[l]
-}
-
 pred consistentEvidence[w: World, knowledge: World->World, a: Answer] {
     (all connected: knowledge[w] | connected.preferences[Logician] = True) => a = Ya
     else {
@@ -57,11 +52,20 @@ pred consistentEvidence[w: World, knowledge: World->World, a: Answer] {
     }
 }
 
---run { setup } for exactly 3 Logician, 1 State, exactly 8 World
+-- defines knowledge at each state
+pred wellFormedEvidence {
+    all s: State, l: Logician, w: World, a: Answer | 
+        l->a->w in s.evidence iff consistentEvidence[w, s.knowledge[l], a]
+}
+
+
+-- constrains all worlds that connect to each other
+pred consistent[l: Logician, w1: World, w2: World] {
+    w1.preferences[l] = w2.preferences[l]
+}
 
 state[State] initState {
    all l: Logician, w1: World, w2: World | consistent[l, w1, w2] iff l->w1->w2 in knowledge
-   all l: Logician, w: World, a: Answer | consistentEvidence[w, knowledge[l], a] iff l->a->w in evidence
    no answered -- no one has answered yet
 }
 
@@ -69,12 +73,9 @@ transition[State] logicianSays[e: Event] {
     answered' = answered + e.speaker
     answered' != answered
     
-    -- build evidence graph for this speaker
     -- intersect everyone else's knowledge graph with that evidence graph
-    all l: Logician | {
-        all w1: World, w2: World | l->w1->w2 in knowledge' iff ((evidence[e.speaker]).w1 = (evidence[e.speaker]).w2 and l->w1->w2 in knowledge)
-        all w: World, a: Answer | l->a->w in evidence' iff consistentEvidence[w, knowledge'[l], a]
-    }
+    all l: Logician, w1: World, w2: World | 
+        l->w1->w2 in knowledge' iff (l->w1->w2 in knowledge) and ((evidence[e.speaker]).w1 = (evidence[e.speaker]).w2)
 
     e.pre = this
     e.post = this'
@@ -86,6 +87,11 @@ transition[State] step {
 }
 
 trace<|State, initState, step, _|> traces: linear {}
+
+pred logicanProblem {
+    setup
+    wellFormedEvidence
+}
 
 inst PossibleWorldsInst {
     Logician = Logician0 + Logician1 + Logician2 + Logician3 + Logician4
