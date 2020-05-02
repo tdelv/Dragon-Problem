@@ -23,14 +23,14 @@ sig State {
 
 pred setup {
     -- all worlds represent each Logician once
-    all w : World | {
-        (w.preferences).Boolean = Logician
-        all l : Logician |
-            one (w.preferences)[l]
-    }
+    ---all w : World | {
+    ---    (w.preferences).Boolean = Logician
+    ---    all l : Logician |
+    ---        one (w.preferences)[l]
+    ---}
 
     -- all unique worlds are in the set (specific number constrained in run statement)
-    all w1: World, w2: World - w1 | not (w1.preferences = w2.preferences)
+    ---all w1: World, w2: World - w1 | not (w1.preferences = w2.preferences)
 
     -- well formed stuff
     Boolean = True + False
@@ -87,4 +87,47 @@ transition[State] step {
 
 trace<|State, initState, step, _|> traces: linear {}
 
-run<|traces|> setup for exactly 4 State, 3 Event, exactly 3 Logician, exactly 8 World
+inst PossibleWorldsInst {
+    Logician = Logician0 + Logician1 + Logician2 + Logician3 + Logician4
+    
+    World = World0 + World1 + World2 + World3 + World4 + World5 + World6 + World7 + World8 + World9 + World10 + World11 + World12 + World13 + World14 + World15 + World16 + World17 + World18 + World19 + World20 + World21 + World22 + World23 + World24 + World25 + World26 + World27 + World28 + World29 + World30 + World31
+    preferences = (
+        World0->(Logician0->True0 + Logician1->True0 + Logician2->True0 + Logician3->True0 + Logician4->True0) +
+        World1->(Logician0->True0 + Logician1->True0 + Logician2->True0 + Logician3->True0 + Logician4->False0) +
+        World2->(Logician0->True0 + Logician1->True0 + Logician2->True0 + Logician3->False0 + Logician4->True0) +
+        World3->(Logician0->True0 + Logician1->True0 + Logician2->True0 + Logician3->False0 + Logician4->False0) +
+        World4->(Logician0->True0 + Logician1->True0 + Logician2->False0 + Logician3->True0 + Logician4->True0) +
+        World5->(Logician0->True0 + Logician1->True0 + Logician2->False0 + Logician3->True0 + Logician4->False0) +
+        World6->(Logician0->True0 + Logician1->True0 + Logician2->False0 + Logician3->False0 + Logician4->True0) +
+        World7->(Logician0->True0 + Logician1->True0 + Logician2->False0 + Logician3->False0 + Logician4->False0) +
+        World8->(Logician0->True0 + Logician1->False0 + Logician2->True0 + Logician3->True0 + Logician4->True0) +
+        World9->(Logician0->True0 + Logician1->False0 + Logician2->True0 + Logician3->True0 + Logician4->False0) +
+        World10->(Logician0->True0 + Logician1->False0 + Logician2->True0 + Logician3->False0 + Logician4->True0) +
+        World11->(Logician0->True0 + Logician1->False0 + Logician2->True0 + Logician3->False0 + Logician4->False0) +
+        World12->(Logician0->True0 + Logician1->False0 + Logician2->False0 + Logician3->True0 + Logician4->True0) +
+        World13->(Logician0->True0 + Logician1->False0 + Logician2->False0 + Logician3->True0 + Logician4->False0) +
+        World14->(Logician0->True0 + Logician1->False0 + Logician2->False0 + Logician3->False0 + Logician4->True0) +
+        World15->(Logician0->True0 + Logician1->False0 + Logician2->False0 + Logician3->False0 + Logician4->False0) +
+        World16->(Logician0->False0 + Logician1->True0 + Logician2->True0 + Logician3->True0 + Logician4->True0) +
+        World17->(Logician0->False0 + Logician1->True0 + Logician2->True0 + Logician3->True0 + Logician4->False0) +
+        World18->(Logician0->False0 + Logician1->True0 + Logician2->True0 + Logician3->False0 + Logician4->True0) +
+        World19->(Logician0->False0 + Logician1->True0 + Logician2->True0 + Logician3->False0 + Logician4->False0) +
+        World20->(Logician0->False0 + Logician1->True0 + Logician2->False0 + Logician3->True0 + Logician4->True0) +
+        World21->(Logician0->False0 + Logician1->True0 + Logician2->False0 + Logician3->True0 + Logician4->False0) +
+        World22->(Logician0->False0 + Logician1->True0 + Logician2->False0 + Logician3->False0 + Logician4->True0) +
+        World23->(Logician0->False0 + Logician1->True0 + Logician2->False0 + Logician3->False0 + Logician4->False0) +
+        World24->(Logician0->False0 + Logician1->False0 + Logician2->True0 + Logician3->True0 + Logician4->True0) +
+        World25->(Logician0->False0 + Logician1->False0 + Logician2->True0 + Logician3->True0 + Logician4->False0) +
+        World26->(Logician0->False0 + Logician1->False0 + Logician2->True0 + Logician3->False0 + Logician4->True0) +
+        World27->(Logician0->False0 + Logician1->False0 + Logician2->True0 + Logician3->False0 + Logician4->False0) +
+        World28->(Logician0->False0 + Logician1->False0 + Logician2->False0 + Logician3->True0 + Logician4->True0) +
+        World29->(Logician0->False0 + Logician1->False0 + Logician2->False0 + Logician3->True0 + Logician4->False0) +
+        World30->(Logician0->False0 + Logician1->False0 + Logician2->False0 + Logician3->False0 + Logician4->True0) +
+        World31->(Logician0->False0 + Logician1->False0 + Logician2->False0 + Logician3->False0 + Logician4->False0))
+
+    #State = 5
+    #Event = 4
+}
+
+
+run<|traces|> setup for PossibleWorldsInst

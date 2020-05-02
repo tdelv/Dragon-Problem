@@ -27,5 +27,5 @@ output += f"    #State = {num_dragons}\n"
 output += f"    #Event = {num_dragons - 1}\n"
 output += "}\n"
 
-with open("instFile", "w") as f:
+with open("instFileDragon", "w") as f:
     f.write(output)

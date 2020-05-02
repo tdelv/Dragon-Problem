@@ -1,0 +1,25 @@
+inst PossibleWorldsInst {
+    Logician = Logician0 + Logician1 + Logician2 + Logician3
+    
+    World = World0 + World1 + World2 + World3 + World4 + World5 + World6 + World7 + World8 + World9 + World10 + World11 + World12 + World13 + World14 + World15
+    preferences = (
+        World0->(Logician0->True0 + Logician1->True0 + Logician2->True0 + Logician3->True0) +
+        World1->(Logician0->True0 + Logician1->True0 + Logician2->True0 + Logician3->False0) +
+        World2->(Logician0->True0 + Logician1->True0 + Logician2->False0 + Logician3->True0) +
+        World3->(Logician0->True0 + Logician1->True0 + Logician2->False0 + Logician3->False0) +
+        World4->(Logician0->True0 + Logician1->False0 + Logician2->True0 + Logician3->True0) +
+        World5->(Logician0->True0 + Logician1->False0 + Logician2->True0 + Logician3->False0) +
+        World6->(Logician0->True0 + Logician1->False0 + Logician2->False0 + Logician3->True0) +
+        World7->(Logician0->True0 + Logician1->False0 + Logician2->False0 + Logician3->False0) +
+        World8->(Logician0->False0 + Logician1->True0 + Logician2->True0 + Logician3->True0) +
+        World9->(Logician0->False0 + Logician1->True0 + Logician2->True0 + Logician3->False0) +
+        World10->(Logician0->False0 + Logician1->True0 + Logician2->False0 + Logician3->True0) +
+        World11->(Logician0->False0 + Logician1->True0 + Logician2->False0 + Logician3->False0) +
+        World12->(Logician0->False0 + Logician1->False0 + Logician2->True0 + Logician3->True0) +
+        World13->(Logician0->False0 + Logician1->False0 + Logician2->True0 + Logician3->False0) +
+        World14->(Logician0->False0 + Logician1->False0 + Logician2->False0 + Logician3->True0) +
+        World15->(Logician0->False0 + Logician1->False0 + Logician2->False0 + Logician3->False0))
+
+    #State = 4
+    #Event = 3
+}
