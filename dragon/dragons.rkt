@@ -26,8 +26,17 @@ pred setup {
     Action = Leave + Stay
 }
 
--- the witch tells the dragons that at least one of them has green eyes
-pred witch {
+-- use this predicate to automatically generate possible worlds
+pred possibleWorlds {
+    -- every dragon has one eye color in each world
+    all w: World, d: Dragon | 
+        one (w.eyeColors)[d]
+
+    -- no two worlds have the same eye color assignment
+    all w1: World, w2: (World - w1) |
+        w1.eyeColors != w2.eyeColors
+
+    -- the witch tells the dragons that at least one of them has green eyes
     all w: World | Green in w.eyeColors[Dragon]
 }
 
@@ -80,13 +89,112 @@ transition[State] step {
 
 trace<|State, initState, step, _|> traces: linear {}
 
+
+
+
+---------------------------------
+-- BEGIN USER INTERACTION ZONE --
+---------------------------------
+
 pred dragonProblem {
     setup
     wellFormedEvidence
-    witch
+
+    -- uncomment the below line to autogenerate instances
+    possibleWorlds
 }
 
-inst PossibleWorldsInst {
+-- insert what instance you want to run here
+-- for premade instances, use 'Dragons[n]' for n = 1 .. 6
+-- for automatic instance, use 'AutomaticInst', and fill in the below instance
+
+inst InstanceToRun { AutomaticInst }
+
+inst AutomaticInst {
+    #Dragon = 3 -- Whatever number you want
+    #World = 7 -- 2^(#Dragon) - 1
+
+    #State = 3
+    #Event = 2
+}
+
+
+-------------------------------
+-- END USER INTERACTION ZONE --
+-------------------------------
+
+
+
+
+-- below are the automatically generated instances to make Forge run faster on larger inputs
+
+inst Dragons1 {
+    Dragon = Dragon0
+    
+    World = World0
+    eyeColors = (
+        World0->(Dragon0->Green0))
+
+    #State = 1
+    #Event = 0
+}
+
+inst Dragons2 {
+    Dragon = Dragon0 + Dragon1
+    
+    World = World0 + World1 + World2
+    eyeColors = (
+        World0->(Dragon0->Green0 + Dragon1->Green0) +
+        World1->(Dragon0->Green0 + Dragon1->Blue0) +
+        World2->(Dragon0->Blue0 + Dragon1->Green0))
+
+    #State = 2
+    #Event = 1
+}
+
+inst Dragons3 {
+    Dragon = Dragon0 + Dragon1 + Dragon2
+    
+    World = World0 + World1 + World2 + World3 + World4 + World5 + World6
+    eyeColors = (
+        World0->(Dragon0->Green0 + Dragon1->Green0 + Dragon2->Green0) +
+        World1->(Dragon0->Green0 + Dragon1->Green0 + Dragon2->Blue0) +
+        World2->(Dragon0->Green0 + Dragon1->Blue0 + Dragon2->Green0) +
+        World3->(Dragon0->Green0 + Dragon1->Blue0 + Dragon2->Blue0) +
+        World4->(Dragon0->Blue0 + Dragon1->Green0 + Dragon2->Green0) +
+        World5->(Dragon0->Blue0 + Dragon1->Green0 + Dragon2->Blue0) +
+        World6->(Dragon0->Blue0 + Dragon1->Blue0 + Dragon2->Green0))
+
+    #State = 3
+    #Event = 2
+}
+
+inst Dragons4 {
+    Dragon = Dragon0 + Dragon1 + Dragon2 + Dragon3
+    
+    World = World0 + World1 + World2 + World3 + World4 + World5 + World6 + World7 + World8 + World9 + World10 + World11 + World12 + World13 + World14
+    eyeColors = (
+        World0->(Dragon0->Green0 + Dragon1->Green0 + Dragon2->Green0 + Dragon3->Green0) +
+        World1->(Dragon0->Green0 + Dragon1->Green0 + Dragon2->Green0 + Dragon3->Blue0) +
+        World2->(Dragon0->Green0 + Dragon1->Green0 + Dragon2->Blue0 + Dragon3->Green0) +
+        World3->(Dragon0->Green0 + Dragon1->Green0 + Dragon2->Blue0 + Dragon3->Blue0) +
+        World4->(Dragon0->Green0 + Dragon1->Blue0 + Dragon2->Green0 + Dragon3->Green0) +
+        World5->(Dragon0->Green0 + Dragon1->Blue0 + Dragon2->Green0 + Dragon3->Blue0) +
+        World6->(Dragon0->Green0 + Dragon1->Blue0 + Dragon2->Blue0 + Dragon3->Green0) +
+        World7->(Dragon0->Green0 + Dragon1->Blue0 + Dragon2->Blue0 + Dragon3->Blue0) +
+        World8->(Dragon0->Blue0 + Dragon1->Green0 + Dragon2->Green0 + Dragon3->Green0) +
+        World9->(Dragon0->Blue0 + Dragon1->Green0 + Dragon2->Green0 + Dragon3->Blue0) +
+        World10->(Dragon0->Blue0 + Dragon1->Green0 + Dragon2->Blue0 + Dragon3->Green0) +
+        World11->(Dragon0->Blue0 + Dragon1->Green0 + Dragon2->Blue0 + Dragon3->Blue0) +
+        World12->(Dragon0->Blue0 + Dragon1->Blue0 + Dragon2->Green0 + Dragon3->Green0) +
+        World13->(Dragon0->Blue0 + Dragon1->Blue0 + Dragon2->Green0 + Dragon3->Blue0) +
+        World14->(Dragon0->Blue0 + Dragon1->Blue0 + Dragon2->Blue0 + Dragon3->Green0))
+
+    #State = 4
+    #Event = 3
+}
+
+inst Dragons5 {
     Dragon = Dragon0 + Dragon1 + Dragon2 + Dragon3 + Dragon4
     
     World = World0 + World1 + World2 + World3 + World4 + World5 + World6 + World7 + World8 + World9 + World10 + World11 + World12 + World13 + World14 + World15 + World16 + World17 + World18 + World19 + World20 + World21 + World22 + World23 + World24 + World25 + World26 + World27 + World28 + World29 + World30
@@ -127,4 +235,84 @@ inst PossibleWorldsInst {
     #Event = 4
 }
 
-run<|traces|> dragonProblem for PossibleWorldsInst
+inst Dragons6 {
+    Dragon = Dragon0 + Dragon1 + Dragon2 + Dragon3 + Dragon4 + Dragon5
+    
+    World = World0 + World1 + World2 + World3 + World4 + World5 + World6 + World7 + World8 + World9 + World10 + World11 + World12 + World13 + World14 + World15 + World16 + World17 + World18 + World19 + World20 + World21 + World22 + World23 + World24 + World25 + World26 + World27 + World28 + World29 + World30 + World31 + World32 + World33 + World34 + World35 + World36 + World37 + World38 + World39 + World40 + World41 + World42 + World43 + World44 + World45 + World46 + World47 + World48 + World49 + World50 + World51 + World52 + World53 + World54 + World55 + World56 + World57 + World58 + World59 + World60 + World61 + World62
+    eyeColors = (
+        World0->(Dragon0->Green0 + Dragon1->Green0 + Dragon2->Green0 + Dragon3->Green0 + Dragon4->Green0 + Dragon5->Green0) +
+        World1->(Dragon0->Green0 + Dragon1->Green0 + Dragon2->Green0 + Dragon3->Green0 + Dragon4->Green0 + Dragon5->Blue0) +
+        World2->(Dragon0->Green0 + Dragon1->Green0 + Dragon2->Green0 + Dragon3->Green0 + Dragon4->Blue0 + Dragon5->Green0) +
+        World3->(Dragon0->Green0 + Dragon1->Green0 + Dragon2->Green0 + Dragon3->Green0 + Dragon4->Blue0 + Dragon5->Blue0) +
+        World4->(Dragon0->Green0 + Dragon1->Green0 + Dragon2->Green0 + Dragon3->Blue0 + Dragon4->Green0 + Dragon5->Green0) +
+        World5->(Dragon0->Green0 + Dragon1->Green0 + Dragon2->Green0 + Dragon3->Blue0 + Dragon4->Green0 + Dragon5->Blue0) +
+        World6->(Dragon0->Green0 + Dragon1->Green0 + Dragon2->Green0 + Dragon3->Blue0 + Dragon4->Blue0 + Dragon5->Green0) +
+        World7->(Dragon0->Green0 + Dragon1->Green0 + Dragon2->Green0 + Dragon3->Blue0 + Dragon4->Blue0 + Dragon5->Blue0) +
+        World8->(Dragon0->Green0 + Dragon1->Green0 + Dragon2->Blue0 + Dragon3->Green0 + Dragon4->Green0 + Dragon5->Green0) +
+        World9->(Dragon0->Green0 + Dragon1->Green0 + Dragon2->Blue0 + Dragon3->Green0 + Dragon4->Green0 + Dragon5->Blue0) +
+        World10->(Dragon0->Green0 + Dragon1->Green0 + Dragon2->Blue0 + Dragon3->Green0 + Dragon4->Blue0 + Dragon5->Green0) +
+        World11->(Dragon0->Green0 + Dragon1->Green0 + Dragon2->Blue0 + Dragon3->Green0 + Dragon4->Blue0 + Dragon5->Blue0) +
+        World12->(Dragon0->Green0 + Dragon1->Green0 + Dragon2->Blue0 + Dragon3->Blue0 + Dragon4->Green0 + Dragon5->Green0) +
+        World13->(Dragon0->Green0 + Dragon1->Green0 + Dragon2->Blue0 + Dragon3->Blue0 + Dragon4->Green0 + Dragon5->Blue0) +
+        World14->(Dragon0->Green0 + Dragon1->Green0 + Dragon2->Blue0 + Dragon3->Blue0 + Dragon4->Blue0 + Dragon5->Green0) +
+        World15->(Dragon0->Green0 + Dragon1->Green0 + Dragon2->Blue0 + Dragon3->Blue0 + Dragon4->Blue0 + Dragon5->Blue0) +
+        World16->(Dragon0->Green0 + Dragon1->Blue0 + Dragon2->Green0 + Dragon3->Green0 + Dragon4->Green0 + Dragon5->Green0) +
+        World17->(Dragon0->Green0 + Dragon1->Blue0 + Dragon2->Green0 + Dragon3->Green0 + Dragon4->Green0 + Dragon5->Blue0) +
+        World18->(Dragon0->Green0 + Dragon1->Blue0 + Dragon2->Green0 + Dragon3->Green0 + Dragon4->Blue0 + Dragon5->Green0) +
+        World19->(Dragon0->Green0 + Dragon1->Blue0 + Dragon2->Green0 + Dragon3->Green0 + Dragon4->Blue0 + Dragon5->Blue0) +
+        World20->(Dragon0->Green0 + Dragon1->Blue0 + Dragon2->Green0 + Dragon3->Blue0 + Dragon4->Green0 + Dragon5->Green0) +
+        World21->(Dragon0->Green0 + Dragon1->Blue0 + Dragon2->Green0 + Dragon3->Blue0 + Dragon4->Green0 + Dragon5->Blue0) +
+        World22->(Dragon0->Green0 + Dragon1->Blue0 + Dragon2->Green0 + Dragon3->Blue0 + Dragon4->Blue0 + Dragon5->Green0) +
+        World23->(Dragon0->Green0 + Dragon1->Blue0 + Dragon2->Green0 + Dragon3->Blue0 + Dragon4->Blue0 + Dragon5->Blue0) +
+        World24->(Dragon0->Green0 + Dragon1->Blue0 + Dragon2->Blue0 + Dragon3->Green0 + Dragon4->Green0 + Dragon5->Green0) +
+        World25->(Dragon0->Green0 + Dragon1->Blue0 + Dragon2->Blue0 + Dragon3->Green0 + Dragon4->Green0 + Dragon5->Blue0) +
+        World26->(Dragon0->Green0 + Dragon1->Blue0 + Dragon2->Blue0 + Dragon3->Green0 + Dragon4->Blue0 + Dragon5->Green0) +
+        World27->(Dragon0->Green0 + Dragon1->Blue0 + Dragon2->Blue0 + Dragon3->Green0 + Dragon4->Blue0 + Dragon5->Blue0) +
+        World28->(Dragon0->Green0 + Dragon1->Blue0 + Dragon2->Blue0 + Dragon3->Blue0 + Dragon4->Green0 + Dragon5->Green0) +
+        World29->(Dragon0->Green0 + Dragon1->Blue0 + Dragon2->Blue0 + Dragon3->Blue0 + Dragon4->Green0 + Dragon5->Blue0) +
+        World30->(Dragon0->Green0 + Dragon1->Blue0 + Dragon2->Blue0 + Dragon3->Blue0 + Dragon4->Blue0 + Dragon5->Green0) +
+        World31->(Dragon0->Green0 + Dragon1->Blue0 + Dragon2->Blue0 + Dragon3->Blue0 + Dragon4->Blue0 + Dragon5->Blue0) +
+        World32->(Dragon0->Blue0 + Dragon1->Green0 + Dragon2->Green0 + Dragon3->Green0 + Dragon4->Green0 + Dragon5->Green0) +
+        World33->(Dragon0->Blue0 + Dragon1->Green0 + Dragon2->Green0 + Dragon3->Green0 + Dragon4->Green0 + Dragon5->Blue0) +
+        World34->(Dragon0->Blue0 + Dragon1->Green0 + Dragon2->Green0 + Dragon3->Green0 + Dragon4->Blue0 + Dragon5->Green0) +
+        World35->(Dragon0->Blue0 + Dragon1->Green0 + Dragon2->Green0 + Dragon3->Green0 + Dragon4->Blue0 + Dragon5->Blue0) +
+        World36->(Dragon0->Blue0 + Dragon1->Green0 + Dragon2->Green0 + Dragon3->Blue0 + Dragon4->Green0 + Dragon5->Green0) +
+        World37->(Dragon0->Blue0 + Dragon1->Green0 + Dragon2->Green0 + Dragon3->Blue0 + Dragon4->Green0 + Dragon5->Blue0) +
+        World38->(Dragon0->Blue0 + Dragon1->Green0 + Dragon2->Green0 + Dragon3->Blue0 + Dragon4->Blue0 + Dragon5->Green0) +
+        World39->(Dragon0->Blue0 + Dragon1->Green0 + Dragon2->Green0 + Dragon3->Blue0 + Dragon4->Blue0 + Dragon5->Blue0) +
+        World40->(Dragon0->Blue0 + Dragon1->Green0 + Dragon2->Blue0 + Dragon3->Green0 + Dragon4->Green0 + Dragon5->Green0) +
+        World41->(Dragon0->Blue0 + Dragon1->Green0 + Dragon2->Blue0 + Dragon3->Green0 + Dragon4->Green0 + Dragon5->Blue0) +
+        World42->(Dragon0->Blue0 + Dragon1->Green0 + Dragon2->Blue0 + Dragon3->Green0 + Dragon4->Blue0 + Dragon5->Green0) +
+        World43->(Dragon0->Blue0 + Dragon1->Green0 + Dragon2->Blue0 + Dragon3->Green0 + Dragon4->Blue0 + Dragon5->Blue0) +
+        World44->(Dragon0->Blue0 + Dragon1->Green0 + Dragon2->Blue0 + Dragon3->Blue0 + Dragon4->Green0 + Dragon5->Green0) +
+        World45->(Dragon0->Blue0 + Dragon1->Green0 + Dragon2->Blue0 + Dragon3->Blue0 + Dragon4->Green0 + Dragon5->Blue0) +
+        World46->(Dragon0->Blue0 + Dragon1->Green0 + Dragon2->Blue0 + Dragon3->Blue0 + Dragon4->Blue0 + Dragon5->Green0) +
+        World47->(Dragon0->Blue0 + Dragon1->Green0 + Dragon2->Blue0 + Dragon3->Blue0 + Dragon4->Blue0 + Dragon5->Blue0) +
+        World48->(Dragon0->Blue0 + Dragon1->Blue0 + Dragon2->Green0 + Dragon3->Green0 + Dragon4->Green0 + Dragon5->Green0) +
+        World49->(Dragon0->Blue0 + Dragon1->Blue0 + Dragon2->Green0 + Dragon3->Green0 + Dragon4->Green0 + Dragon5->Blue0) +
+        World50->(Dragon0->Blue0 + Dragon1->Blue0 + Dragon2->Green0 + Dragon3->Green0 + Dragon4->Blue0 + Dragon5->Green0) +
+        World51->(Dragon0->Blue0 + Dragon1->Blue0 + Dragon2->Green0 + Dragon3->Green0 + Dragon4->Blue0 + Dragon5->Blue0) +
+        World52->(Dragon0->Blue0 + Dragon1->Blue0 + Dragon2->Green0 + Dragon3->Blue0 + Dragon4->Green0 + Dragon5->Green0) +
+        World53->(Dragon0->Blue0 + Dragon1->Blue0 + Dragon2->Green0 + Dragon3->Blue0 + Dragon4->Green0 + Dragon5->Blue0) +
+        World54->(Dragon0->Blue0 + Dragon1->Blue0 + Dragon2->Green0 + Dragon3->Blue0 + Dragon4->Blue0 + Dragon5->Green0) +
+        World55->(Dragon0->Blue0 + Dragon1->Blue0 + Dragon2->Green0 + Dragon3->Blue0 + Dragon4->Blue0 + Dragon5->Blue0) +
+        World56->(Dragon0->Blue0 + Dragon1->Blue0 + Dragon2->Blue0 + Dragon3->Green0 + Dragon4->Green0 + Dragon5->Green0) +
+        World57->(Dragon0->Blue0 + Dragon1->Blue0 + Dragon2->Blue0 + Dragon3->Green0 + Dragon4->Green0 + Dragon5->Blue0) +
+        World58->(Dragon0->Blue0 + Dragon1->Blue0 + Dragon2->Blue0 + Dragon3->Green0 + Dragon4->Blue0 + Dragon5->Green0) +
+        World59->(Dragon0->Blue0 + Dragon1->Blue0 + Dragon2->Blue0 + Dragon3->Green0 + Dragon4->Blue0 + Dragon5->Blue0) +
+        World60->(Dragon0->Blue0 + Dragon1->Blue0 + Dragon2->Blue0 + Dragon3->Blue0 + Dragon4->Green0 + Dragon5->Green0) +
+        World61->(Dragon0->Blue0 + Dragon1->Blue0 + Dragon2->Blue0 + Dragon3->Blue0 + Dragon4->Green0 + Dragon5->Blue0) +
+        World62->(Dragon0->Blue0 + Dragon1->Blue0 + Dragon2->Blue0 + Dragon3->Blue0 + Dragon4->Blue0 + Dragon5->Green0))
+
+    #State = 6
+    #Event = 5
+}
+
+run<|traces|> dragonProblem for InstanceToRun
+
+--test expect {
+--    reachableYes1 : reachable for reachableYes1 is sat
+--    reachableYes2 : reachable for reachableYes2 is sat
+--    reachableYes3 : reachable for reachableYes3 is sat
+--}
+
