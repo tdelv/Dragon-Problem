@@ -21,29 +21,16 @@ sig State {
     answered: set Logician -- who has answered the bartender already
 }
 
+-- well formed stuff
 pred setup {
-    -- all worlds represent each Logician once
-    ---all w : World | {
-    ---    (w.preferences).Boolean = Logician
-    ---    all l : Logician |
-    ---        one (w.preferences)[l]
-    ---}
-
-    -- all unique worlds are in the set (specific number constrained in run statement)
-    ---all w1: World, w2: World - w1 | not (w1.preferences = w2.preferences)
-
-    -- well formed stuff
     Boolean = True + False
     Answer = Idk + Ya + Na
 }
 
-
-sig Event {
-    speaker: one Logician,
-    pre: one State,
-    post: one State
-}
-
+-- logicians say:
+--   yes if they know all logicians want a drink,
+--   no if they know some logician doesn't want a drink,
+--   idk otherwise
 pred consistentEvidence[w: World, knowledge: World->World, a: Answer] {
     (all connected: knowledge[w] | connected.preferences[Logician] = True) => a = Ya
     else {
@@ -59,7 +46,14 @@ pred wellFormedEvidence {
 }
 
 
--- constrains all worlds that connect to each other
+sig Event {
+    speaker: one Logician,
+    pre: one State,
+    post: one State
+}
+
+-- used for init setup
+-- true if the given logician has the same preference in both worlds
 pred consistent[l: Logician, w1: World, w2: World] {
     w1.preferences[l] = w2.preferences[l]
 }
@@ -69,6 +63,7 @@ state[State] initState {
    no answered -- no one has answered yet
 }
 
+-- update each dragon's knowledge graph witih the speaker's evidence
 transition[State] logicianSays[e: Event] {
     answered' = answered + e.speaker
     answered' != answered

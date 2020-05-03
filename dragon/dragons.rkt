@@ -15,22 +15,13 @@ one sig Leave extends Action{}
 one sig Stay extends Action{}
 
 sig State {
-    communal: set World->World, --shared evidence from all dragons
     knowledge: set Dragon->World->World,
-    evidence: set Dragon->Action->World
+    evidence: set Dragon->Action->World,
+    communal: set World->World --shared evidence from all dragons
 }
 
+-- well formed stuff
 pred setup {
-    -- all worlds represent each Dragon once
-    --all w : World | {
-    --    all d : Dragon |
-    --        one (w.eyeColors)[d]
-    --}
-
-    -- all unique worlds are in the set (specific number constrained in run statement)
-    --all w1: World, w2: World - w1 | not (w1.eyeColors = w2.eyeColors)
-
-    -- well formed stuff
     Color = Blue + Green
     Action = Leave + Stay
 }
@@ -40,6 +31,7 @@ pred witch {
     all w: World | Green in w.eyeColors[Dragon]
 }
 
+-- dragons leave if they know they have green eyes, and stay otherwise
 pred consistentEvidence[d: Dragon, w: World, knowledge: World->World, a: Answer] {
     (all connected: knowledge[w] | connected.eyeColors[d] = Green) => a = Leave
     else a = Stay
@@ -50,6 +42,7 @@ pred communalEdge[w1: World, w2: World, evidence: Dragon->Action->World] {
     all d: Dragon | evidence[d].w1 = evidence[d].w2
 }
 
+-- defines the evidence graphs for each dragon as well as the communal evidence for each state
 pred wellFormedEvidence {
     all s: State | {
         all d: Dragon, w: World, a: Action | (d->a->w in s.evidence) iff consistentEvidence[d, w, s.knowledge[d], a]
@@ -62,6 +55,7 @@ sig Event {
     post: one State
 }
 
+-- used for init setup
 -- true if all dragons OTHER than the one passed in have the same eye color
 pred consistent[d: Dragon, w1: World, w2: World] {
     all other: Dragon - d | w1.eyeColors[other] = w2.eyeColors[other]
@@ -71,6 +65,7 @@ state[State] initState {
     all d: Dragon, w1: World, w2: World | (d->w1->w2 in knowledge) iff consistent[d, w1, w2]
 }
 
+-- update each dragon's knowledge graph witih the communal evidence
 transition[State] nextDay[e: Event] {
     all d: Dragon | knowledge'[d] = knowledge[d] & communal
 
