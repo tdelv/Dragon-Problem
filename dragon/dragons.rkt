@@ -308,11 +308,52 @@ inst Dragons6 {
     #Event = 5
 }
 
+
+-------------------------
+-- Running and Testing --
+-------------------------
+
 run<|traces|> dragonProblem for InstanceToRun
 
---test expect {
---    reachableYes1 : reachable for reachableYes1 is sat
---    reachableYes2 : reachable for reachableYes2 is sat
---    reachableYes3 : reachable for reachableYes3 is sat
---}
 
+-- knowledge is always increasing
+pred increasingKnowledge {
+    all e: Event |
+        e.pre.knowledge ni e.post.knowledge
+}
+
+expect {
+    increasingKnowledge1 : increasingKnowledge for Dragons1 is sat
+    increasingKnowledge2 : increasingKnowledge for Dragons2 is sat
+    increasingKnowledge3 : increasingKnowledge for Dragons3 is sat
+    increasingKnowledge4 : increasingKnowledge for Dragons4 is sat
+}
+
+-- once leave, always leave
+pred leavePermanent {
+    all e: Event |
+        all w: World, d: Dragon |
+            w in e.pre.evidence[d][Leave] => w in e.post.evidence[d][Leave]
+}
+
+expect {
+    leavePermanent1 : leavePermanent for Dragons1 is sat
+    leavePermanent2 : leavePermanent for Dragons2 is sat
+    leavePermanent3 : leavePermanent for Dragons3 is sat
+    leavePermanent4 : leavePermanent for Dragons4 is sat
+}
+
+-- everyone leaves on last day when all green
+pred correctSolution {
+    let greenWorld = {w: World | w.eyeColors[Dragon] = Green} |
+        all s: State | 
+            s !in Event.pre implies (s.evidence[Dragon]).greenWorld = Leave
+                            else (s.evidence[Dragon]).greenWorld = Stay
+}
+
+expect {
+    correctSolution1 : correctSolution for Dragons1 is sat
+    correctSolution2 : correctSolution for Dragons2 is sat
+    correctSolution3 : correctSolution for Dragons3 is sat
+    correctSolution4 : correctSolution for Dragons4 is sat
+}
