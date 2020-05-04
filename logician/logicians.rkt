@@ -354,12 +354,28 @@ expect {
     answerPermanent4 : answerPermanent for Logicians4 is sat
 }
 
+-- all logicians agree once someone says an answer
+pred logiciansAgree {
+    all e1, e2: Event |
+        e1.post = e2.pre implies {
+            e1.pre.evidence[e1.speaker][Na] in e2.pre.evidence[e2.speaker][Na]
+            e1.pre.evidence[e1.speaker][Ya] in e2.pre.evidence[e2.speaker][Ya]
+        }
+}
+
+expect {
+    logiciansAgree1 : logiciansAgree for Logicians1 is sat
+    logiciansAgree2 : logiciansAgree for Logicians2 is sat
+    logiciansAgree3 : logiciansAgree for Logicians3 is sat
+    logiciansAgree4 : logiciansAgree for Logicians4 is sat
+}
+
 -- Idk, Idk, ..., Idk, Yes when all want drinks
 pred correctSolution {
     let yesWorld = {w: World | w.preferences[Logician] = True} |
         all e: Event | {
-            e.post !in Event.pre implies ((e.pre).evidence[e.speaker]).yesWorld = Ya
-                                 else ((e.pre).evidence[e.speaker]).yesWorld = Idk
+            e.post !in Event.pre implies (e.pre.evidence[e.speaker]).yesWorld = Ya
+                                 else (e.pre.evidence[e.speaker]).yesWorld = Idk
         }
 }
 

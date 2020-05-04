@@ -343,21 +343,6 @@ expect {
     leavePermanent4 : leavePermanent for Dragons4 is sat
 }
 
--- everyone leaves on last day when all green
-pred correctSolution {
-    let greenWorld = {w: World | w.eyeColors[Dragon] = Green} |
-        all s: State | 
-            s !in Event.pre implies (s.evidence[Dragon]).greenWorld = Leave
-                            else (s.evidence[Dragon]).greenWorld = Stay
-}
-
-expect {
-    correctSolution1 : correctSolution for Dragons1 is sat
-    correctSolution2 : correctSolution for Dragons2 is sat
-    correctSolution3 : correctSolution for Dragons3 is sat
-    correctSolution4 : correctSolution for Dragons4 is sat
-}
-
 -- dragons with same eyes answer the same
 pred sameEyesSameAnswer {
     all d1, d2: Dragon, w: World |
@@ -372,4 +357,19 @@ expect {
     sameEyesSameAnswer2 : sameEyesSameAnswer for Dragons2 is sat
     sameEyesSameAnswer3 : sameEyesSameAnswer for Dragons3 is sat
     sameEyesSameAnswer4 : sameEyesSameAnswer for Dragons4 is sat
+}
+
+-- everyone leaves on last day when all green
+pred correctSolution {
+    let greenWorld = {w: World | w.eyeColors[Dragon] = Green} |
+        all s: State | 
+            s !in Event.pre implies (s.evidence[Dragon]).greenWorld = Leave
+                            else (s.evidence[Dragon]).greenWorld = Stay
+}
+
+expect {
+    correctSolution1 : correctSolution for Dragons1 is sat
+    correctSolution2 : correctSolution for Dragons2 is sat
+    correctSolution3 : correctSolution for Dragons3 is sat
+    correctSolution4 : correctSolution for Dragons4 is sat
 }
