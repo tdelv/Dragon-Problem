@@ -322,7 +322,7 @@ inst Logicians6 {
 -- Running and Testing --
 -------------------------
 
--- run<|traces|> logicianProblem for InstanceToRun
+run<|traces|> logicianProblem for InstanceToRun
 
 
 -- knowledge is always increasing
@@ -331,7 +331,7 @@ pred increasingKnowledge {
         e.pre.knowledge ni e.post.knowledge
 }
 
-test expect {
+expect {
     increasingKnowledge1 : increasingKnowledge for Logicians1 is sat
     increasingKnowledge2 : increasingKnowledge for Logicians2 is sat
     increasingKnowledge3 : increasingKnowledge for Logicians3 is sat
@@ -347,7 +347,7 @@ pred answerPermanent {
         }
 }
 
-test expect {
+expect {
     answerPermanent1 : answerPermanent for Logicians1 is sat
     answerPermanent2 : answerPermanent for Logicians2 is sat
     answerPermanent3 : answerPermanent for Logicians3 is sat
@@ -363,7 +363,7 @@ pred correctSolution {
         }
 }
 
-test expect {
+expect {
     correctSolution1 : correctSolution for Logicians1 is sat
     correctSolution2 : correctSolution for Logicians2 is sat
     correctSolution3 : correctSolution for Logicians3 is sat
