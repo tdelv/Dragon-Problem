@@ -1,0 +1,38 @@
+DnD: Drinks n’ Dragons / CS1950y Final Project
+
+NOTE: We highly recommend viewing the PDF version of this README. It has pretty pictures.
+
+PREMISE
+We initially set out to model the logic problem “Dragons”. To model this problem, we first modeled a similar, but simpler problem called “Logicians”. From modelling “Logicians”, we realized we could abstract our methodology to solve any similar logic problem, by intersecting  each participant’s  knowledge graphs  with evidence graphs (more on that later). Additionally, we made our model more extensive by having it model any series of events, rather than hard coding the events given in the original premise.
+
+Logicians: Three logicians walk into a bar. The bartender asks, “Do you all want drinks?” The first one says “I don’t know”. The second says “I don’t know”. The last says “yes”.
+
+Dragons : There is an island of dragons, with either green or blue eyes. If a dragon knows it has green eyes, at midnight on the day of realization, they will leave the island. You tell the group of n dragons that at least one of them has green eyes (without stating who). On the nth day, they all transform into sparrows and leave the island.
+
+MODEL
+Both of the problems model each participant’s (Dragon/Logician) view of the world, known as their knowledge graph. Each world represents a possible situation, such as Logician 1, 2, and 3 wanting a drink.  An edge between two worlds means that these two worlds are consistent (ex. From logician 1’s perspective, all worlds where Logician 1 wants a drink is in one equivalence class. The world where Logician 1 doesn’t want a drink is a separate equivalence class). Thus, we define equivalence classes as worlds that are consistent with each other.  
+
+Each participant also has an evidence graph, which is where each world is mapped to its outcome based on what event occurred. The evidence graph is public knowledge, thus all participants are able to access it. These equivalence classes tend to be coarser than the knowledge graphs.
+
+Our general procedure is that we 1) establish everyone’s knowledge graphs 2) build the evidence graph 3) intersect each participant’s knowledge graph with the evidence graph to “update” their knowledge after an event. One thing to note is that in the Logicians problem, we update everyone’s knowledge graphs by intersecting with the speaker’s evidence graph, because the speaker speaking offers new information.  In contrast, in the Dragons problem, we build a communal knowledge graph based on the participants' knowledge graphs. This is because no dragon “reveals” knowledge to the others like the Logician problem, because they discover their eye colors simultaneously.
+
+
+To look at more specifics on how the evidence graph / knowledge graph / transitions are modeled per problem, we have left comments in the code.
+
+RECOMMENDED VISUALIZER SETTINGS IN FORGE:
+State -> Dragon/Logician
+Set eyeColors/preferences to display as attribute
+Toggle through States to see an individual dragon/logician as the situation progresses and they learn more
+
+VERIFICATION & TESTING
+Hand simulated (Fig 1 & 2 in the PDF README) the outcomes for 3 logicians and 3 dragons in order to understand our approach and also verify the solutions in the visualizer
+Viewing up to 6 logicians / dragons concrete instances
+Python script (inst_script_dragon.py and inst_script_logician.py) to hard code the possible worlds and number of logicians. When we originally tried running the problem without a concrete instance, it took quite a long time (4 dragons ~ 15 min). Thus, we created some concrete instances to see if forge would run faster. The run time for our concrete instances is significantly faster --  about 4-8 seconds for each. We have a user interaction zone on each problem’s model, where the user can conveniently view the different concrete instances in Forge’s visualizer.
+Testing facts that should be true across states (up to 4 participants)
+increasingKnowledge - participants should know more (as reflected in the knowledge graph) as states progress.
+leavePermanent/answerPermanent - once a participant has made an answer (for the dragon, leaving the island, for the logician, when they speak), they must be consistently in this world for later states.
+sameEyesSameAnswer/logiciansAgree - generally, all participants with the same attribute will come to the same action. For instance, all dragons with the same eye colors will come  to make the same action, and all logicians who do not want a drink will say no.
+correctSolution - the original answer to the premise. For Dragons,  all dragons will leave on the final day because they discover their eyes are  green. For Logicians, the series of speakers will go [I don’t know, I don’t know … I don’t know, Yes] if they do all want drinks in the first place.
+
+CONCLUDING THOUGHTS
+We originally sought to model the situation of the original dragon premise. Then, we used the logicians puzzle as a stepping stone to solving the dragon problem. Additionally, our approach for modeling the problem (updating knowledge graphs by intersecting with an evidence graph) can be generally applied to other problems of the same nature. Given that we have a method that models all the possible conclusions made on all possible events in the given premise, we have reached our original goal.
