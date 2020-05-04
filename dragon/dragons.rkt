@@ -357,3 +357,19 @@ expect {
     correctSolution3 : correctSolution for Dragons3 is sat
     correctSolution4 : correctSolution for Dragons4 is sat
 }
+
+-- dragons with same eyes answer the same
+pred sameEyesSameAnswer {
+    all d1, d2: Dragon, w: World |
+        w.eyeColors[d1] = w.eyeColors[d2] implies {
+            all s: State | s.evidence[d1] = s.evidence[d2]
+        }
+
+}
+
+expect {
+    sameEyesSameAnswer1 : sameEyesSameAnswer for Dragons1 is sat
+    sameEyesSameAnswer2 : sameEyesSameAnswer for Dragons2 is sat
+    sameEyesSameAnswer3 : sameEyesSameAnswer for Dragons3 is sat
+    sameEyesSameAnswer4 : sameEyesSameAnswer for Dragons4 is sat
+}
