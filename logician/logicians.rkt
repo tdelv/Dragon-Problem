@@ -104,14 +104,14 @@ pred logicianProblem {
     wellFormedEvidence
 
     -- uncomment the below line to autogenerate instances
-    possibleWorlds
+    -- possibleWorlds
 }
 
 -- insert what instance you want to run here
 -- for premade instances, use 'Logicians[n]' for n = 1 .. 6
 -- for automatic instance, use 'AutomaticInst', and fill in the below instance
 
-inst InstanceToRun { AutomaticInst }
+inst InstanceToRun { Logicians4 }
 
 inst AutomaticInst {
     #Logician = 3 -- Whatever number you want

@@ -101,14 +101,14 @@ pred dragonProblem {
     wellFormedEvidence
 
     -- uncomment the below line to autogenerate instances
-    possibleWorlds
+    -- possibleWorlds
 }
 
 -- insert what instance you want to run here
 -- for premade instances, use 'Dragons[n]' for n = 1 .. 6
 -- for automatic instance, use 'AutomaticInst', and fill in the below instance
 
-inst InstanceToRun { AutomaticInst }
+inst InstanceToRun { Dragons4 }
 
 inst AutomaticInst {
     #Dragon = 3 -- Whatever number you want
