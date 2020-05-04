@@ -317,10 +317,55 @@ inst Logicians6 {
     #Event = 5
 }
 
-run<|traces|> logicianProblem for InstanceToRun
 
---test expect {
---    reachableYes1 : reachable for reachableYes1 is sat
---    reachableYes2 : reachable for reachableYes2 is sat
---    reachableYes3 : reachable for reachableYes3 is sat
---}
+-------------------------
+-- Running and Testing --
+-------------------------
+
+-- run<|traces|> logicianProblem for InstanceToRun
+
+
+-- knowledge is always increasing
+pred increasingKnowledge {
+    all e: Event |
+        e.pre.knowledge ni e.post.knowledge
+}
+
+test expect {
+    increasingKnowledge1 : increasingKnowledge for Logicians1 is sat
+    increasingKnowledge2 : increasingKnowledge for Logicians2 is sat
+    increasingKnowledge3 : increasingKnowledge for Logicians3 is sat
+    increasingKnowledge4 : increasingKnowledge for Logicians4 is sat
+}
+
+-- once Yes/No, always Yes/No
+pred answerPermanent {
+    all e: Event |
+        all w: World, l: Logician | {
+            w in e.pre.evidence[l][Ya] => w in e.post.evidence[l][Ya]
+            w in e.pre.evidence[l][Na] => w in e.post.evidence[l][Na]
+        }
+}
+
+test expect {
+    answerPermanent1 : answerPermanent for Logicians1 is sat
+    answerPermanent2 : answerPermanent for Logicians2 is sat
+    answerPermanent3 : answerPermanent for Logicians3 is sat
+    answerPermanent4 : answerPermanent for Logicians4 is sat
+}
+
+-- Idk, Idk, ..., Idk, Yes when all want drinks
+pred correctSolution {
+    let yesWorld = {w: World | w.preferences[Logician] = True} |
+        all e: Event | {
+            e.post !in Event.pre implies ((e.pre).evidence[e.speaker]).yesWorld = Ya
+                                 else ((e.pre).evidence[e.speaker]).yesWorld = Idk
+        }
+}
+
+test expect {
+    correctSolution1 : correctSolution for Logicians1 is sat
+    correctSolution2 : correctSolution for Logicians2 is sat
+    correctSolution3 : correctSolution for Logicians3 is sat
+    correctSolution4 : correctSolution for Logicians4 is sat
+}
